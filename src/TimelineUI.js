@@ -9,14 +9,14 @@ export class TimelineUI {
         this.play = true
         this.playButton.addEventListener('click', () => {
             this.play = !this.play
-
             this.playButton.textContent = this.play ? '||' : '>'
         })
 
         this.targerTime = 0
         this.click = false
         const mousePose = e => {
-            this.targerTime = ((e.clientX - this.timeSlider.offsetLeft) / this.timeSlider.clientWidth) * this.timeSlider.max
+            const t = ((e.clientX - this.timeSlider.offsetLeft) / this.timeSlider.clientWidth)
+            this.targerTime = Math.min(Math.max(t, 0), 1) * this.timeSlider.max
         }
 
         this.timeSlider.addEventListener('mousedown', e => {
@@ -36,7 +36,7 @@ export class TimelineUI {
 
     setDuration(d = 1) {
         this.timeSlider.min = 0
-        this.timeSlider.max = d
+        this.timeSlider.max = Math.max(d - 1, 0)
     }
 
     update(time) {

@@ -74,10 +74,13 @@ const Datas = {
         return new Promise(async (resolve, reject) => {
             try {
                 result.waypoints = await this.loadWaypoints()
+                
                 result.drone = await this.loadObject('./objets/drone/FlyDrone', true)
                 result.drone.rotation.y = -Math.PI / 2
 
                 result.sol = await this.loadObject('./objets/sol/sol', true)
+                result.sol.position.y = -0.001
+
                 result.skybox = await this.loadSkybox()
             } catch (error) {
                 reject(error)
