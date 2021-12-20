@@ -2,13 +2,7 @@ class Drone {
     constructor(waypoints, droneMesh) {
         this.waypoints = waypoints
         this.droneMesh = droneMesh
-        this.time = 0
         this.duration = this.waypoints[this.waypoints.length - 1].ms
-    }
-
-    forward(delta) {
-        this.time += delta
-        this.animAt(this.time)
     }
 
     animAt(ms) {
@@ -27,8 +21,6 @@ class Drone {
         this.droneMesh.position.lerpVectors(
             waypoint0.position, waypoint1.position, t
         )
-
-        //this.droneMesh.rotation.y = ms * 0.01
     }
 }
 

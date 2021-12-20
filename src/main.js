@@ -1,11 +1,17 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { GUI } from 'three/examples/jsm/libs/dat.gui.module';
+import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
+import { TimelineUI } from './TimelineUI'
 
 import Datas from './Datas'
 import Drone from './Drone'
 
+const timelineUI = new TimelineUI()
+
+const clock = new THREE.Clock()
 const drones = []
+let time = 0
+let animationDuration = 0
 
 const renderer = new THREE.WebGLRenderer({antialias: true})
 renderer.setSize(window.innerWidth, window.innerHeight)
@@ -31,9 +37,13 @@ const settings = {
 }
 
 const draw = ms => {
+    const delta = clock.getDelta() * 1000 | 0
+    if(timelineUI.isPLaying()) time += delta
+    time = timelineUI.update(time)
+    time = time % animationDuration
+
     cameraControl.update()
-    //for(const drone of drones) drone.forward(16)
-    for(const drone of drones) drone.animAt(ms)
+    for(const drone of drones) drone.animAt(time)
     renderer.render(scene, camera)
 }
 
@@ -47,14 +57,22 @@ const createTrajectorieMesh = waypoints => {
 }
 
 const assignWaypoints = waypointsList => {
+    drones.splice(0, drones.length)
     droneMeshGroup.group.clear()
     droneMeshGroup.trajectories.clear()
+    animationDuration = 0
+
     for(const waypoints of waypointsList) {
         const droneMesh = droneMeshGroup.mesh.clone()
-        drones.push(new Drone(waypoints, droneMesh));
+        const drone = new Drone(waypoints, droneMesh)
+        drones.push(drone)
         droneMeshGroup.group.add(droneMesh)
         droneMeshGroup.trajectories.add(createTrajectorieMesh(waypoints))
+
+        if(animationDuration < drone.duration) animationDuration = drone.duration
     }
+
+    timelineUI.setDuration(animationDuration)
 }
 
 window.lw = p => {
@@ -62,8 +80,6 @@ window.lw = p => {
 }
 
 Datas.loadAll().then(data => {
-    console.log(data)
-
     scene.background = data.skybox
     droneMeshGroup.mesh = data.drone
     assignWaypoints(data.waypoints)
@@ -75,29 +91,17 @@ Datas.loadAll().then(data => {
     const directionalLight = new THREE.DirectionalLight(0xfff9c4, 2)
     directionalLight.position.set(-20, 10, 20)
     directionalLight.target.position.set(0, 0, 0)
-    directionalLight.castShadow = true
     scene.add(directionalLight)
-    scene.add(directionalLight.target)
 
-
-    /*directionalLight.target.updateMatrixWorld()
-    scene.add(new THREE.CameraHelper(directionalLight.shadow.camera))
-
-    const helper = new THREE.DirectionalLightHelper(directionalLight)
-    scene.add(helper)*/
-
-    scene.castShadow = true
-
-    console.log(scene)
-
+    //////////////////////////////
 
     const gui = new GUI()
     const settingsFolder = gui.addFolder('Settings')
     settingsFolder.add(settings, 'trajectories').onChange(b => droneMeshGroup.trajectories.visible = b)
     settingsFolder.open()
 
+    //////////////////////////////
 
-    renderer.shadowMap.enabled = true
     renderer.setAnimationLoop(draw)
 })
 
