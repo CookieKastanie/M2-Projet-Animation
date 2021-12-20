@@ -1,0 +1,77 @@
+{
+	"description": "un fichier de test plus probant",
+	"framerate": 30,
+	"drones": [
+		{
+			"id": 1,
+			"waypoints": [
+				{
+					"frame": 0,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": 100,
+						"lng_X": 200
+					}
+				},
+				{
+					"frame": 200,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": -500,
+						"lng_X": 150
+					}
+				},
+				{
+					"frame": 300,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": -9000,
+						"lng_X": 150
+					}
+				}
+			]
+		},
+		{
+			"id": 2,
+			"waypoints": [
+				{
+					"frame": 0,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": 100,
+						"lng_X": -800
+					}
+				},
+				{
+					"frame": 300,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": -500,
+						"lng_X": -400
+					}
+				}
+			]
+		},
+		{
+			"id": 3,
+			"waypoints": [
+				{
+					"frame": 0,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": 100,
+						"lng_X": -400
+					}
+				},
+				{
+					"frame": 300,
+					"position": {
+						"alt_Y": 100,
+						"lat_Z": -500,
+						"lng_X": -800
+					}
+				}
+			]
+		}
+	]
+}
