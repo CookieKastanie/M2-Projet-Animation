@@ -7,13 +7,17 @@ import TimelineUI from './TimelineUI'
 import Datas from './Datas'
 import Drone from './Drone'
 import Utils from './Utils'
+import LogsUI from './LogsUI'
 
 const timelineUI = new TimelineUI()
+const logsUI = new LogsUI()
 
 const clock = new THREE.Clock()
 const drones = []
 let time = 0
 let animationDuration = 0
+
+logsUI.onClick(t => time = t)
 
 const renderer = new THREE.WebGLRenderer({antialias: true})
 renderer.setSize(window.innerWidth, window.innerHeight)
@@ -65,17 +69,6 @@ const draw = () => {
     for(const drone of drones) drone.animAt(time)
     renderer.render(scene, camera)
     labelRenderer.render(scene, camera);
-
-    for(let i = 0; i < drones.length - 1; ++i) {
-        for(let j = i + 1; j < drones.length; ++j) {
-            const d1 = drones[i]
-            const d2 = drones[j]
-
-            if(d1.hitOther(d2)) {
-                console.log(d1.label.text, d2.label.text)
-            }
-        }
-    }
 }
 
 const assignWaypoints = waypointsList => {
@@ -113,6 +106,8 @@ const assignWaypoints = waypointsList => {
     }
 
     timelineUI.setDuration(animationDuration)
+
+    logsUI.fillCollisions(Utils.getCollisions(drones, animationDuration))
 }
 
 window.lw = p => {

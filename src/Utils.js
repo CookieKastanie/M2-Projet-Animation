@@ -34,6 +34,39 @@ class Utils {
             new THREE.MeshBasicMaterial({color: 0xdddddd, transparent: true, opacity: 0.4})
         )
     }
+
+    static getCollisions(drones, duration, fps = 30) {
+        const collisions = []
+
+        for(let i = 0; i < duration; i += fps) {
+            for(const drone of drones) drone.animAt(i)
+
+            const pairs = []
+
+            for(let i = 0; i < drones.length - 1; ++i) {
+                for(let j = i + 1; j < drones.length; ++j) {
+                    const d1 = drones[i]
+                    const d2 = drones[j]
+
+                    if(d1.hitOther(d2)) {
+                        pairs.push({
+                            droneA: d1,
+                            droneB: d2
+                        })
+                    }
+                }
+            }
+
+            if(pairs.length > 0) {
+                collisions.push({
+                    time: i,
+                    pairs
+                })
+            }
+        }
+
+        return collisions
+    }
 }
 
 export default Utils

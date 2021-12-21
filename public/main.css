@@ -36,3 +36,30 @@ body {
     padding: 2px;
     background: rgba(0, 0, 0, .6);
 }
+
+#logs {
+    color: #FFF;
+    font-family: sans-serif;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .6);
+    z-index: 999;
+    max-height: 90%;
+    overflow-y: scroll;
+}
+
+.timeStamp {
+    padding: 8px 0;
+    border-bottom: #aaaaaa solid 1px;
+    
+}
+
+.timeStamp:hover {
+    cursor: pointer;
+}
+
+.pair {
+    margin-left: 1em;
+}
