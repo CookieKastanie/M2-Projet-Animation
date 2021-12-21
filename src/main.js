@@ -1,11 +1,12 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GUI } from 'three/examples/jsm/libs/dat.gui.module'
-import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer'
 
-import { TimelineUI } from './TimelineUI'
+import TimelineUI from './TimelineUI'
 import Datas from './Datas'
 import Drone from './Drone'
+import Utils from './Utils'
 
 const timelineUI = new TimelineUI()
 
@@ -28,11 +29,10 @@ document.body.appendChild(labelRenderer.domElement)
 
 const scene = new THREE.Scene()
 const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.01, 200)
-camera.position.y = 2
-camera.position.z = 5
+camera.position.set(5, 3, 5)
 
 const cameraControl = new OrbitControls(camera, labelRenderer.domElement)
-cameraControl.target.y = 2
+cameraControl.target.set(0, 2, 0)
 
 const helpers = {}
 
@@ -41,7 +41,8 @@ const droneMeshGroup = {
     group: new THREE.Group(),
     trajectories: new THREE.Group(),
     labels: new THREE.Group(),
-    lines: new THREE.Group()
+    lines: new THREE.Group(),
+    hitboxes: new THREE.Group()
 }
 
 const settings = {
@@ -49,7 +50,9 @@ const settings = {
     grid: false,
     labels: false,
     groundLine: false,
-    trajectories: false
+    trajectories: false,
+    hitboxes: false,
+    hitboxSize: 1.15
 }
 
 const draw = () => {
@@ -62,33 +65,18 @@ const draw = () => {
     for(const drone of drones) drone.animAt(time)
     renderer.render(scene, camera)
     labelRenderer.render(scene, camera);
-}
 
-const createTrajectorieMesh = waypoints => {
-    const points = []
-    for(const p of waypoints) points.push(p.position) 
-    return new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(points),
-        new THREE.LineBasicMaterial({color: 0xdd2222})
-    )
-}
+    for(let i = 0; i < drones.length - 1; ++i) {
+        for(let j = i + 1; j < drones.length; ++j) {
+            const d1 = drones[i]
+            const d2 = drones[j]
 
-const createLabel = text => {
-    const div = document.createElement('div')
-    div.className = 'label'
-    div.textContent = text
-    const obj = new CSS2DObject(div)
-    obj.visible = settings.labels
-    return obj
+            if(d1.hitOther(d2)) {
+                console.log(d1.label.text, d2.label.text)
+            }
+        }
+    }
 }
-
-const createLineMesh = () => {
-    const points = [new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0, 0)]
-    return new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(points),
-        new THREE.LineBasicMaterial({color: 0x22dd22})
-    )
-} 
 
 const assignWaypoints = waypointsList => {
     drones.splice(0, drones.length)
@@ -96,24 +84,30 @@ const assignWaypoints = waypointsList => {
     droneMeshGroup.trajectories.clear()
     droneMeshGroup.labels.clear()
     droneMeshGroup.lines.clear()
+    droneMeshGroup.hitboxes.clear()
 
     animationDuration = 0
     time = 0
 
-    const lineMesh = createLineMesh()
+    const lineMesh = Utils.createLineMesh()
+    const hitboxMesh = Utils.createShpereMesh()
 
     let i = 0
     for(const waypoints of waypointsList) {
         const droneMesh = droneMeshGroup.mesh.clone()
-        const label = createLabel(`Drone ${i++}`)
+        const label = Utils.createLabel(`Drone ${i++}`)
+        label.visible = settings.labels
         const line = lineMesh.clone()
-        const drone = new Drone(waypoints, droneMesh, label, line)
+        const hitbox = hitboxMesh.clone()
+        const drone = new Drone(waypoints, droneMesh, label, line, hitbox)
+        drone.hitboxSize = settings.hitboxSize
         drones.push(drone)
     
         droneMeshGroup.group.add(droneMesh)
-        droneMeshGroup.trajectories.add(createTrajectorieMesh(waypoints))
+        droneMeshGroup.trajectories.add(Utils.createTrajectorieMesh(waypoints))
         droneMeshGroup.labels.add(label)
         droneMeshGroup.lines.add(line)
+        droneMeshGroup.hitboxes.add(hitbox)
 
         animationDuration = Math.max(animationDuration, drone.duration)
     }
@@ -133,8 +127,10 @@ Datas.loadAll().then(data => {
     scene.add(droneMeshGroup.trajectories)
     scene.add(droneMeshGroup.labels)
     scene.add(droneMeshGroup.lines)
+    scene.add(droneMeshGroup.hitboxes)
     droneMeshGroup.trajectories.visible = settings.trajectories
     droneMeshGroup.lines.visible = settings.groundLine
+    droneMeshGroup.hitboxes.visible = settings.hitboxes
     scene.add(data.sol)
 
     const directionalLight = new THREE.DirectionalLight(0xfff9c4, 2)
@@ -161,6 +157,10 @@ Datas.loadAll().then(data => {
     })
     settingsFolder.add(settings, 'groundLine').onChange(b => droneMeshGroup.lines.visible = b)
     settingsFolder.add(settings, 'trajectories').onChange(b => droneMeshGroup.trajectories.visible = b)
+    settingsFolder.add(settings, 'hitboxes').onChange(b => droneMeshGroup.hitboxes.visible = b)
+    settingsFolder.add(settings, 'hitboxSize', 0, 10, 0.01).onChange(v => {
+        drones.forEach(d => d.hitboxSize = v)
+    })
     settingsFolder.open()
 
     //////////////////////////////

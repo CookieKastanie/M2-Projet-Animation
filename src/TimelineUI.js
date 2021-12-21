@@ -1,4 +1,4 @@
-export class TimelineUI {
+class TimelineUI {
     constructor() {
         this.playButton = document.querySelector('#play-button')
         this.timeSlider = document.querySelector('#time-slider')
@@ -50,3 +50,5 @@ export class TimelineUI {
         return this.play
     }
 }
+
+export default TimelineUI
