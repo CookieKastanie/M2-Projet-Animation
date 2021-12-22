@@ -56,7 +56,8 @@ const settings = {
     groundLine: false,
     trajectories: false,
     hitboxes: false,
-    hitboxSize: 1.15
+    hitboxSize: 1.15,
+    maxSpeed: 4
 }
 
 const draw = () => {
@@ -108,6 +109,7 @@ const assignWaypoints = waypointsList => {
     timelineUI.setDuration(animationDuration)
 
     logsUI.fillCollisions(Utils.getCollisions(drones, animationDuration))
+    logsUI.fillSpeedings(Utils.getSpeedings(drones, animationDuration, settings.maxSpeed))
 }
 
 window.lw = p => {
@@ -153,8 +155,26 @@ Datas.loadAll().then(data => {
     settingsFolder.add(settings, 'groundLine').onChange(b => droneMeshGroup.lines.visible = b)
     settingsFolder.add(settings, 'trajectories').onChange(b => droneMeshGroup.trajectories.visible = b)
     settingsFolder.add(settings, 'hitboxes').onChange(b => droneMeshGroup.hitboxes.visible = b)
+
+    let collsTimeoutId = 0
     settingsFolder.add(settings, 'hitboxSize', 0, 10, 0.01).onChange(v => {
         drones.forEach(d => d.hitboxSize = v)
+
+        // petit delai avant de recalculer les collisions
+        if(collsTimeoutId) clearTimeout(collsTimeoutId) 
+        collsTimeoutId = setTimeout(() => {
+            logsUI.fillCollisions(Utils.getCollisions(drones, animationDuration))
+            collsTimeoutId = 0
+        }, 500)
+    })
+
+    let speedsTimeoutId = 0
+    settingsFolder.add(settings, 'maxSpeed', 0, 10, 0.01).onChange(v => {
+        if(speedsTimeoutId) clearTimeout(speedsTimeoutId) 
+        speedsTimeoutId = setTimeout(() => {
+            logsUI.fillSpeedings(Utils.getSpeedings(drones, animationDuration, settings.maxSpeed))
+            speedsTimeoutId = 0
+        }, 500)
     })
     settingsFolder.open()
 

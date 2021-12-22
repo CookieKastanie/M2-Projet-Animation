@@ -35,10 +35,10 @@ class Utils {
         )
     }
 
-    static getCollisions(drones, duration, fps = 30) {
+    static getCollisions(drones, duration, dt = 30) {
         const collisions = []
 
-        for(let i = 0; i < duration; i += fps) {
+        for(let i = 0; i < duration; i += dt) {
             for(const drone of drones) drone.animAt(i)
 
             const pairs = []
@@ -60,12 +60,45 @@ class Utils {
             if(pairs.length > 0) {
                 collisions.push({
                     time: i,
-                    pairs
+                    list: pairs
                 })
             }
         }
 
         return collisions
+    }
+
+    static getSpeedings(drones, duration, maxSpeed, dt = 30) {
+        const maxDistSq = (maxSpeed / dt) * (maxSpeed / dt)
+
+        const speeds = []
+
+        for(let i = dt; i < duration; i += dt) {
+
+            const excess = []
+            for(const drone of drones) {
+                drone.animAt(i - dt)
+                const p0 = new THREE.Vector3()
+                p0.copy(drone.droneMesh.position)
+
+                drone.animAt(i)
+                const p1= new THREE.Vector3()
+                p1.copy(drone.droneMesh.position)
+
+                p0.sub(p1)
+
+                if(p0.dot(p0) > maxDistSq) excess.push(drone)
+            }
+
+            if(excess.length > 0) {
+                speeds.push({
+                    time: i,
+                    list: excess
+                })
+            }
+        }
+
+        return speeds
     }
 }
 

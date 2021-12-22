@@ -8,7 +8,18 @@
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <div id="logs"></div>
+    <div id="logs">
+        <input type="radio" id="tab1" name="css-tabs" checked>
+		<input type="radio" id="tab2" name="css-tabs">
+
+        <ul class="tabs">
+			<li class="tab"><label for="tab1">Collisions</label></li>
+			<li class="tab"><label for="tab2">Speedings</label></li>
+		</ul>
+
+        <div class="tab-content" id="collisions"></div>
+        <div class="tab-content" id="speedings"></div>
+    </div>
     <div id="timeline">
         <button id="play-button">||</button>
         <input id="time-slider" type="range"\>

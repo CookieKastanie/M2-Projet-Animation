@@ -1,35 +1,41 @@
 class LogsUI {
     constructor() {
-        this.container = document.querySelector('#logs')
+        this.collisionsContainer = document.querySelector('#collisions')
+        this.speedingsContainer = document.querySelector('#speedings')
         this.clickCB = () => {}
     }
 
-    fillCollisions(collisions) {
-        this.container.innerHTML = ''
+    fill(container, objcts, formatCB) {
+        container.innerHTML = ''
 
-        for(const col of collisions) {
+        for(const obj of objcts) {
             const timeDiv = document.createElement('div')
             timeDiv.classList.add('timeStamp')
             timeDiv.addEventListener('click', () => {
-                this.clickCB(col.time)
+                this.clickCB(obj.time)
             })
 
             const textDiv = document.createElement('div')
-
-            textDiv.textContent = `Time: ${col.time | 0}`
-
+            textDiv.textContent = `Time: ${obj.time | 0}`
             timeDiv.appendChild(textDiv)
 
-            for(const p of col.pairs) {
-                const colDiv = document.createElement('div')
-                colDiv.classList.add('pair')
-                colDiv.textContent = `${p.droneA.label.text} - ${p.droneB.label.text}`
-
-                timeDiv.appendChild(colDiv)
+            for(const e of obj.list) {
+                const lDiv = document.createElement('div')
+                lDiv.classList.add('list')
+                lDiv.textContent = formatCB(e)
+                timeDiv.appendChild(lDiv)
             }
 
-            this.container.appendChild(timeDiv)
+            container.appendChild(timeDiv)
         }
+    }
+
+    fillCollisions(collisions) {
+        this.fill(this.collisionsContainer, collisions, p => `${p.droneA.label.text} # ${p.droneB.label.text}`)
+    }
+
+    fillSpeedings(excess) {
+        this.fill(this.speedingsContainer, excess, d => `${d.label.text}`)
     }
 
     onClick(f) {
