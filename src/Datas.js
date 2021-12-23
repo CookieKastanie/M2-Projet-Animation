@@ -75,8 +75,7 @@ const Datas = {
             try {
                 result.waypoints = await this.loadWaypoints()
                 
-                result.drone = await this.loadObject('./objets/drone/FlyDrone', true)
-                result.drone.rotation.y = -Math.PI / 2
+                result.drone = await this.loadObject('./objets/drone/dji600', true)
 
                 result.sol = await this.loadObject('./objets/sol/sol', true)
                 result.sol.position.y = -0.001

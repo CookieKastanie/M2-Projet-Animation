@@ -32,10 +32,16 @@ class LogsUI {
 
     fillCollisions(collisions) {
         this.fill(this.collisionsContainer, collisions, p => `${p.droneA.label.text} # ${p.droneB.label.text}`)
+        if(this.collisionsContainer.childNodes.length === 0) {
+            this.collisionsContainer.textContent = 'No collisions'
+        }
     }
 
     fillSpeedings(excess) {
         this.fill(this.speedingsContainer, excess, d => `${d.label.text}`)
+        if(this.speedingsContainer.childNodes.length === 0) {
+            this.speedingsContainer.textContent = 'No speedings'
+        }
     }
 
     onClick(f) {

@@ -56,7 +56,7 @@ const settings = {
     groundLine: false,
     trajectories: false,
     hitboxes: false,
-    hitboxSize: 1.15,
+    hitboxSize: 0.6,
     maxSpeed: 4
 }
 
@@ -130,7 +130,7 @@ Datas.loadAll().then(data => {
     droneMeshGroup.hitboxes.visible = settings.hitboxes
     scene.add(data.sol)
 
-    const directionalLight = new THREE.DirectionalLight(0xfff9c4, 2)
+    const directionalLight = new THREE.DirectionalLight(0xfff9c4, 3)
     directionalLight.position.set(-20, 10, 20)
     directionalLight.target.position.set(0, 0, 0)
     scene.add(directionalLight)
