@@ -57,7 +57,7 @@ body {
     left: 0;
     background: rgba(0, 0, 0, .6);
     z-index: 999;
-    max-height: 90%;
+    max-height: calc(100vh - 53px);
     overflow-y: auto;
     user-select: none;
 }
