@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
+import Utils from './Utils'
 
 const Datas = {
     async loadObject(path, loadMat = false) {
@@ -39,32 +40,12 @@ const Datas = {
             })
         })
     },
-    
+
     async loadWaypoints(path = './datas/waypoints.json') {
         return new Promise(async resolve => {
             const dataBlob = await fetch(path)
             const animation = await dataBlob.json()
-    
-            const result = []
-            const { framerate } = animation
-            for(const drone of animation.drones) {
-                const finalWaypoints = []
-    
-                for(const waypoint of drone.waypoints) {
-                    const { position } = waypoint
-                    const scale = 1 / 100
-                    finalWaypoints.push({
-                        position: new THREE.Vector3(
-                            position.lng_X, position.alt_Y, position.lat_Z
-                        ).multiplyScalar(scale),
-                        ms: (waypoint.frame / framerate) * 1000
-                    })
-                }
-    
-                result.push(finalWaypoints)
-            }
-    
-            resolve(result)
+            resolve(Utils.parseAnimationJSON(animation))
         })
     },
 

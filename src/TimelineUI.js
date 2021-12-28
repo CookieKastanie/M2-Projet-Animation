@@ -9,7 +9,7 @@ class TimelineUI {
         this.play = true
         this.playButton.addEventListener('click', () => {
             this.play = !this.play
-            this.playButton.textContent = this.play ? '||' : '>'
+            this.playButton.textContent = this.play ? '||' : '>>'
         })
 
         this.targerTime = 0

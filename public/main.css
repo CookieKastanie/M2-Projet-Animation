@@ -6,13 +6,13 @@ body {
 
 #info {
     font-family: arial;
-    background-color : rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.5);
     color: white;
     position: absolute;
-    left : 10px;
+    left: 10px;
     bottom: 10px;
-    width : 200px;
-    padding : 1em;
+    width: 200px;
+    padding: 1em;
     z-index: 100;
 }
 
@@ -24,10 +24,21 @@ body {
     display: flex;
     flex: 1 10;
     z-index: 999;
+    background: rgba(0,0,0,0.5);
 }
 
 #time-slider {
     width: 100%;
+}
+
+#play-button {
+    border: none;
+    color: #FFF;
+    font-weight: 400;
+    font-family: monospace;
+    font-size: 20px;
+    padding: 5px;
+    background: rgba(0,0,0,0);
 }
 
 .label {
@@ -37,7 +48,7 @@ body {
     background: rgba(0, 0, 0, .6);
 }
 
-#logs {
+#side-panel {
     color: #FFF;
     font-family: sans-serif;
     padding: 10px;
@@ -99,8 +110,8 @@ body {
 #logs [type="radio"]:nth-of-type(3):checked ~ .tabs .tab:nth-of-type(3) label,
 #logs [type="radio"]:nth-of-type(4):checked ~ .tabs .tab:nth-of-type(4) label,
 #logs [type="radio"]:nth-of-type(5):checked ~ .tabs .tab:nth-of-type(5) label {
-	border-bottom-color: #21ff33;
-	border-top-color: #21ff33;
+	border-bottom-color: #6774ff;
+	border-top-color: #6774ff;
 }
 
 #logs [type="radio"]:nth-of-type(1):checked ~ .tab-content:nth-of-type(1),

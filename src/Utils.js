@@ -2,6 +2,29 @@ import * as THREE from 'three'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 
 class Utils {
+    static parseAnimationJSON(animation) {
+        const result = []
+        const { framerate } = animation
+        for(const drone of animation.drones) {
+            const finalWaypoints = []
+
+            for(const waypoint of drone.waypoints) {
+                const { position } = waypoint
+                const scale = 1 / 100
+                finalWaypoints.push({
+                    position: new THREE.Vector3(
+                        position.lng_X, position.alt_Y, position.lat_Z
+                    ).multiplyScalar(scale),
+                    ms: (waypoint.frame / framerate) * 1000
+                })
+            }
+
+            result.push(finalWaypoints)
+        }
+
+        return result
+    }
+
     static createTrajectorieMesh(waypoints) {
         const points = []
         for(const p of waypoints) points.push(p.position) 
@@ -99,6 +122,15 @@ class Utils {
         }
 
         return speeds
+    }
+
+    static async fileToJSON(file) {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader()
+            fileReader.onload = event => resolve(JSON.parse(event.target.result))
+            fileReader.onerror = error => reject(error)
+            fileReader.readAsText(file)
+        })
     }
 }
 

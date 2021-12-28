@@ -11,6 +11,7 @@ import LogsUI from './LogsUI'
 
 const timelineUI = new TimelineUI()
 const logsUI = new LogsUI()
+const fileInput = document.querySelector('#file-input')
 
 const clock = new THREE.Clock()
 const drones = []
@@ -112,10 +113,6 @@ const assignWaypoints = waypointsList => {
     logsUI.fillSpeedings(Utils.getSpeedings(drones, animationDuration, settings.maxSpeed))
 }
 
-window.lw = p => {
-    Datas.loadWaypoints(p).then(assignWaypoints)
-}
-
 Datas.loadAll().then(data => {
     scene.background = data.skybox
     droneMeshGroup.mesh = data.drone
@@ -189,3 +186,8 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight)
     labelRenderer.setSize(window.innerWidth, window.innerHeight);
 }, false);
+
+fileInput.addEventListener('change', e => {
+    Utils.fileToJSON(e.target.files[0])
+    .then(data => assignWaypoints(Utils.parseAnimationJSON(data)))
+})
