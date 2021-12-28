@@ -58,6 +58,7 @@ body {
     background: rgba(0, 0, 0, .6);
     z-index: 999;
     max-height: calc(100vh - 53px);
+    overflow-x: hidden;
     overflow-y: auto;
     user-select: none;
 }
