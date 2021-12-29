@@ -31,6 +31,10 @@ body {
     width: 100%;
 }
 
+#time-slider:hover {
+    cursor: pointer;
+}
+
 #play-button {
     border: none;
     color: #FFF;
@@ -39,6 +43,10 @@ body {
     font-size: 20px;
     padding: 5px;
     background: rgba(0,0,0,0);
+}
+
+#play-button:hover {
+    cursor: pointer;
 }
 
 .label {
